@@ -40,7 +40,7 @@ client.on('message', msg => {
           msg.reply('pong!');
           break;
         case 'help':
-          msg.channel.send('', HELP_EMBED);
+          msg.channel.send(HELP_EMBED);
           break;
         case 'test':
           msg.channel.send(new SetGame(true, 1, msg.channel).board[0].toEmote());
@@ -120,8 +120,31 @@ client.on('message', msg => {
             if (games[msg.channel.id].isGameDone()) {
               msg.reply('The game is already over.');
             } else {
-              games[msg.channel.id].fillBoard();
-              games[msg.channel.id].printBoard();
+              const embed = new discord.MessageEmbed()
+                .setTitle('Refresh Board?')
+                .setDescription('Voting will finish after 5 seconds.')
+                .setColor(16241709)
+                .addFields({name: 'Vote Yes', value: '👍', inline: true},
+                  {name: 'Vote No', value: '👎', inline: true});
+              msg.channel.send(embed)
+                .then(message => {
+                  message.react('👍');
+                  message.react('👎');
+                  return message.awaitReactions(reaction => reaction.emoji.name === '👍' ||
+                    reaction.emoji.name === '👎', {time: 5000});
+                })
+                .then(results => {
+                  const up = results.get('👍').count - 1;
+                  const down = results.get('👎').count - 1;
+                  if (up > down) {
+                    msg.channel.send(`**Vote:** Refresh (${up}-${down})`);
+                    games[msg.channel.id].fillBoard();
+                    games[msg.channel.id].printBoard();
+                  } else {
+                    msg.channel.send(`**Vote:** No refresh (${up}-${down})`);
+                  }
+                })
+                .catch(err => msg.channel.send('**Error:** ' + err.message));
             }
           } else {
             msg.reply('No game is currently running.');
@@ -135,7 +158,7 @@ client.on('message', msg => {
         .setTitle('Uh oh, something went wrong!')
         .setDescription(err.message)
         .setColor(14294044);
-      msg.reply('', embed);
+      msg.reply(embed);
       console.error(err);
     }
   }
