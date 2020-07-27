@@ -1,0 +1,11 @@
+{
+  "name": "discord-plays-set",
+  "version": "1.0.0",
+  "description": "Discord bot to play the game Set! collaboratively with friends.",
+  "main": "index.js",
+  "author": "Austin Jenchi (timtim17)",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^12.2.0"
+  }
+}
