@@ -28,6 +28,7 @@ const games = {};
 
 client.on('ready', () => {
   console.log(`Client connected as ${client.user.tag}!`);
+  client.user.setActivity('Set!');
 });
 
 client.on('message', msg => {
