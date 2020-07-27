@@ -37,7 +37,7 @@ and save it in the project root as `secret.json`.
 
 ## Credits
 
-The game of Set! was designed by [Set Enterprises Inc.](https//setgame.com). These graphics are from
+The game of Set! was designed by [Set Enterprises Inc.](https://setgame.com). These graphics are from
 an assignment used in the University of Washington's [CSE 154: Web Development](https://cs.uw.edu/154).
 
 #### Disclaimer
