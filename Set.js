@@ -22,8 +22,12 @@ class SetGame {
     this.channel = channel;
     this.setCount = 0;
 
-    // fill board
-    for (let i = 0; i < (isEasy ? EASY_CARDS : NORMAL_CARDS); i++) {
+    this.fillBoard();
+  }
+
+  fillBoard() {
+    this.board = [];
+    for (let i = 0; i < (this.isEasy ? EASY_CARDS : NORMAL_CARDS); i++) {
       this.board.push(this.generateRandomCard());
     }
   }
@@ -72,6 +76,32 @@ class SetGame {
       await this.channel.send(result);
     }
   }
+
+  pick(one, two, three) {
+    if (one < 0 || one >= this.board.length
+      || two < 0 || two >= this.board.length
+      || three < 0 || three >= this.board.length) {
+        this.channel.send('Make sure all your card numbers are on the board!');
+      } else {
+        let oneCard = this.board[one];
+        let twoCard = this.board[two];
+        let threeCard = this.board[three];
+        this.channel.send(oneCard.toEmote() + twoCard.toEmote() + threeCard.toEmote())
+          .then(() => {
+            if (isASet(oneCard, twoCard, threeCard)) {
+              this.channel.send("**SET!**\n---");
+              this.setCount++;
+              this.board[one] = this.generateRandomCard();
+              this.board[two] = this.generateRandomCard();
+              this.board[three] = this.generateRandomCard();
+              this.printBoard();
+            } else {
+              this.channel.send("**Not a Set :(**");
+            }
+          })
+          .catch(err => this.channel.send(`**__Error:__** ${err.message}`));
+      }
+  }
 }
 
 class SetCard {
@@ -113,6 +143,22 @@ class SetCard {
  */
 function pickRandom(array) {
   return array[Math.floor(Math.random() * array.length)];
+}
+
+/**
+ * Checks if the given card are a set, that is for all properties they are all unique or all the
+ * same across the cards.
+ * @param {...SetCard} var_args - Cards to check if they are a Set or not
+ */
+function isASet() {
+  const cardProps = [...arguments].map(card => card.toString().split('-'));
+  for (let i = 0; i < cardProps[0].length; i++) {
+    let props = new Set(cardProps.reduce((acc, cur) => [...acc, cur[i]], []));
+    if (props.size > 1 && props.size < arguments.length) {
+      return false;
+    }
+  }
+  return true;
 }
 
 module.exports = SetGame;

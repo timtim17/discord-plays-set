@@ -18,7 +18,10 @@ const HELP_EMBED = new discord.MessageEmbed()
     {name: PREFIX + 'ping', value: 'pong!', inline: true},
     {name: PREFIX + 'newgame [minutes] [easy?]', value: 'Starts a new game.', inline: true},
     {name: PREFIX + 'board', value: 'Shows the board, if there is one.', inline: true},
-    {name: PREFIX + 'time', value: 'Shows the remaining time left in the game.', inline: true}
+    {name: PREFIX + 'time', value: 'Shows the remaining time left in the game.', inline: true},
+    {name: PREFIX + 'count', value: 'Shows the number of Sets found.', inline: true},
+    {name: PREFIX + 'refresh', value: 'Re-randomizes the cards on the board.', inline: true},
+    {name: PREFIX + 'pick # # #', value: 'Pick the numbers of three cards to see if they\'re a Set.', inline: true}
   );
 
 const games = {};
@@ -42,11 +45,12 @@ client.on('message', msg => {
           msg.channel.send(new SetGame(true, 1, msg.channel).board[0].toEmote());
           break;
         case 'newgame':
+        case 'new':
           if (games.hasOwnProperty(msg.channel.id) && !games[msg.channel.id].isGameDone()) {
             msg.reply('Can\'t start a new game, one is already in progress.');
           } else {
             const [_, time, diff] = args;
-            const minutes = parseInt(time);
+            const minutes = Number(time);
             if (minutes) {
               games[msg.channel.id] = new SetGame(diff === 'easy', minutes, msg.channel);
               games[msg.channel.id].printBoard();
@@ -72,6 +76,51 @@ client.on('message', msg => {
               msg.reply('The game is already over.');
             } else {
               msg.channel.send(games[msg.channel.id].getMMSS());
+            }
+          } else {
+            msg.reply('No game is currently running.');
+          }
+          break;
+        case 'pick':
+          if (games.hasOwnProperty(msg.channel.id)) {
+            if (games[msg.channel.id].isGameDone()) {
+              msg.reply('The game is already over.');
+            } else {
+              let [_, one, two, three] = args;
+              one = Number(one);
+              two = Number(two);
+              three = Number(three);
+              if (!(Number.isNaN(one) || Number.isNaN(two) || Number.isNaN(three))) {
+                games[msg.channel.id].pick(one, two, three);
+              } else {
+                msg.reply('Missing card numbers - please provide three card numbers to make a Set.');
+              }
+            }
+          } else {
+            msg.reply('No game is currently running.');
+          }
+          break;
+        case 'count':
+        case 'setcount':
+        case 'score':
+          if (games.hasOwnProperty(msg.channel.id)) {
+            if (games[msg.channel.id].isGameDone()) {
+              msg.reply('The game is already over.');
+            } else {
+              msg.channel.send('You have found ' + games[msg.channel.id].setCount + ' Sets!');
+            }
+          } else {
+            msg.reply('No game is currently running.');
+          }
+          break;
+        case 'reload':
+        case 'refresh':
+          if (games.hasOwnProperty(msg.channel.id)) {
+            if (games[msg.channel.id].isGameDone()) {
+              msg.reply('The game is already over.');
+            } else {
+              games[msg.channel.id].fillBoard();
+              games[msg.channel.id].printBoard();
             }
           } else {
             msg.reply('No game is currently running.');
