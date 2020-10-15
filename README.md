@@ -21,7 +21,7 @@ https://discord.com/oauth2/authorize?client_id=737141757317349376&scope=bot&perm
 
 ## How to Run
 
-Install with `yarn` (or your Node package manager of choice) and execute `npm run start` to start
+Install with `yarn` (or your Node package manager of choice) and execute `yarn start`/`npm start` to start
 the bot. A Discord API key is required - copy the format in [`secret_example.json`](secret_example.json)
 and save it in the project root as `secret.json`.
 
