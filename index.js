@@ -1,7 +1,7 @@
 'use strict';
 
 const discord = require('discord.js');
-const { token } = require('./secret.json');
+const token = process.env.SET_TOKEN || require('./secret.json').token;
 const SetGame = require('./Set');
 
 const client = new discord.Client();
