@@ -3,7 +3,7 @@
 const discord = require('discord.js');
 const token = process.env.SET_TOKEN || require('./secret.json').token;
 const SetGame = require('./Set');
-require('./aliveServer');
+// require('./aliveServer');
 
 const client = new discord.Client();
 
