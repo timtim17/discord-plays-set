@@ -15,8 +15,6 @@ cards are *either* all unique or all the same.
 
 ## Invite Link
 
-**Status:** Not currently up.
-
 https://discord.com/oauth2/authorize?client_id=737141757317349376&scope=bot&permissions=67584
 
 ## How to Run
